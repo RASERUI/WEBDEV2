@@ -1,0 +1,13 @@
+BYPASS
+
+attrib +h +s "C:\Users\HPNT\.slinky"
+
+
+attrib +h +s "C:\Users\HPNT\Pictures\Roblox\Numbers\IP"
+
+
+UNDO
+
+attrib -h -s "C:\Users\HPNT\Pictures\Roblox\punjabi\Ho"
+
+attrib -h -s "C:\Users\HPNT\.slinky"
