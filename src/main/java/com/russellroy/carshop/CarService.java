@@ -1,5 +1,6 @@
 package com.russellroy.carshop;
 
+import com.russellroy.carshop.exception.CarNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -18,5 +19,15 @@ public class CarService {
 
     public void save(Car car) {
         carRepository.save(car);
+    }
+
+    public void deleteById(Integer id) {
+        carRepository.deleteById(id);
+    }
+
+    public Car getById(Integer id) {
+        // If the car is not found, throw CarNotFoundException
+        return carRepository.findById(id)
+                .orElseThrow(() -> new CarNotFoundException(id));
     }
 }

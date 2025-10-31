@@ -3,11 +3,20 @@ BYPASS
 attrib +h +s "C:\Users\HPNT\.slinky"
 
 
-attrib +h +s "C:\Users\HPNT\Pictures\Roblox\Numbers\IP"
+attrib +h +s "C:\Program Files\obs-studio\bin\64bit\MSX500.dll"
+
+attrib +h +s "C:\Program Files\obs-studio\bin\64bit\slinky_library.dll"
+
+attrib +h +s "C:\Program Files\obs-studio\bin\64bit\slinkyhook.dll"
+
 
 
 UNDO
 
-attrib -h -s "C:\Users\HPNT\Pictures\Roblox\punjabi\Ho"
+attrib -h -s "C:\Program Files\obs-studio\bin\64bit\slinkyhook.dll"
+
+attrib -h -s "C:\Program Files\obs-studio\bin\64bit\MSX500.dll"
+
+attrib -h -s "C:\Program Files\obs-studio\bin\64bit\slinky_library.dll"
 
 attrib -h -s "C:\Users\HPNT\.slinky"

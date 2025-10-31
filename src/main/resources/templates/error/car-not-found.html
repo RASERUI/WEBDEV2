@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Car Not Found</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-weight: normal;
+            margin-bottom: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        p {
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        a.button {
+            display: inline-block;
+            padding: 8px 14px;
+            background: #007bff;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        a.button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Car Not Found</h1>
+    <p th:text="${message}">The car with the given ID does not exist.</p>
+    <a href="/" th:href="@{/}" class="button">Back to Home</a>
+</div>
+</body>
+</html>

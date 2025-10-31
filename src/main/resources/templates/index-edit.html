@@ -4,22 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Car List</title>
+    <title>Edit Mode - Car List</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-100 p-5">
 
-<!-- Header -->
-<div class="max-w-6xl mx-auto flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-normal">Car List</h1>
-    <form th:action="@{/logout}" method="post">
-        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">Logout</button>
-    </form>
-</div>
-
-<!-- Table Container -->
+<!-- Container -->
 <div class="max-w-6xl mx-auto bg-white p-6 rounded-xl shadow-md">
+
+    <h1 class="text-2xl font-normal text-center mb-6">Edit Mode - Car List</h1>
+
     <div class="overflow-x-auto">
         <table class="min-w-full border-collapse table-auto">
             <thead>
@@ -48,7 +43,7 @@
                 <td class="px-4 py-2" th:text="${car.engineType}"></td>
                 <td class="px-4 py-2" th:text="${car.transmission}"></td>
                 <td class="px-4 py-2 space-x-2">
-                    <a th:href="@{/view/{id}(id=${car.carId})}" class="px-2 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm">View</a>
+                    <a th:href="@{/edit/{id}(id=${car.carId})}" class="px-2 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm">Edit</a>
                     <a th:href="@{/delete/{id}(id=${car.carId})}" class="px-2 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm">Delete</a>
                 </td>
             </tr>
@@ -59,8 +54,9 @@
     <!-- Buttons -->
     <div class="mt-4 flex space-x-2">
         <a href="/new" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">+ Add New Car</a>
-        <a href="/editmode" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">Switch to Edit Mode</a>
+        <a href="/" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors">Exit Edit Mode</a>
     </div>
+
 </div>
 
 </body>
