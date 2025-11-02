@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Car Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            font-weight: normal;
+            margin-bottom: 20px;
+        }
+        .detail {
+            margin-bottom: 10px;
+        }
+        .label {
+            font-weight: bold;
+            display: inline-block;
+            width: 150px;
+        }
+        a.button {
+            display: inline-block;
+            padding: 8px 14px;
+            background: #007bff;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: 15px;
+        }
+        a.button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Car Details</h1>
+
+    <div class="detail"><span class="label">ID:</span> <span th:text="${car.carId}"></span></div>
+    <div class="detail"><span class="label">Plate:</span> <span th:text="${car.licensePlateNumber}"></span></div>
+    <div class="detail"><span class="label">Make:</span> <span th:text="${car.make}"></span></div>
+    <div class="detail"><span class="label">Model:</span> <span th:text="${car.model}"></span></div>
+    <div class="detail"><span class="label">Year:</span> <span th:text="${car.year}"></span></div>
+    <div class="detail"><span class="label">Color:</span> <span th:text="${car.color}"></span></div>
+    <div class="detail"><span class="label">Body:</span> <span th:text="${car.bodyType}"></span></div>
+    <div class="detail"><span class="label">Engine:</span> <span th:text="${car.engineType}"></span></div>
+    <div class="detail"><span class="label">Transmission:</span> <span th:text="${car.transmission}"></span></div>
+
+    <a href="/" class="button">Back to List</a>
+</div>
+</body>
+</html>
