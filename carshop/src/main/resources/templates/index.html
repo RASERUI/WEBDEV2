@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Shop - AJAX CRUD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="bg-gray-100 p-5">
+
+<div class="max-w-6xl mx-auto bg-white p-6 rounded-xl shadow-md">
+    <h1 class="text-2xl font-normal text-center mb-6">Car Shop</h1>
+
+
+    <div id="carFormModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center">
+        <div class="bg-white p-6 rounded-xl w-full max-w-lg relative">
+            <h2 id="formTitle" class="text-xl font-semibold mb-4">Add New Car</h2>
+            <form id="carForm" class="space-y-4">
+                <input type="hidden" id="carId" />
+                <div>
+                    <label class="block mb-1">License Plate</label>
+                    <input type="text" id="licensePlateNumber" class="w-full p-2 border rounded-md" required>
+                </div>
+                <div>
+                    <label class="block mb-1">Make</label>
+                    <input type="text" id="make" class="w-full p-2 border rounded-md" required>
+                </div>
+                <div>
+                    <label class="block mb-1">Model</label>
+                    <input type="text" id="model" class="w-full p-2 border rounded-md" required>
+                </div>
+                <div>
+                    <label class="block mb-1">Year</label>
+                    <input type="number" id="year" class="w-full p-2 border rounded-md" required>
+                </div>
+                <div>
+                    <label class="block mb-1">Color</label>
+                    <input type="text" id="color" class="w-full p-2 border rounded-md">
+                </div>
+                <div>
+                    <label class="block mb-1">Body Type</label>
+                    <input type="text" id="bodyType" class="w-full p-2 border rounded-md">
+                </div>
+                <div>
+                    <label class="block mb-1">Engine Type</label>
+                    <input type="text" id="engineType" class="w-full p-2 border rounded-md">
+                </div>
+                <div>
+                    <label class="block mb-1">Transmission</label>
+                    <input type="text" id="transmission" class="w-full p-2 border rounded-md">
+                </div>
+                <div class="flex justify-end space-x-2 mt-4">
+                    <button type="button" id="cancelBtn" class="px-4 py-2 bg-gray-400 rounded-md hover:bg-gray-500 text-white">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700 text-white">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="flex justify-end mb-4">
+        <button id="addCarBtn" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">+ Add Car</button>
+    </div>
+
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full border-collapse table-auto">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th>ID</th>
+                    <th>Plate</th>
+                    <th>Make</th>
+                    <th>Model</th>
+                    <th>Year</th>
+                    <th>Color</th>
+                    <th>Body</th>
+                    <th>Engine</th>
+                    <th>Transmission</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="car-table-body" class="divide-y divide-gray-200"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    const $tableBody = $('#car-table-body');
+    const $modal = $('#carFormModal');
+    const $form = $('#carForm');
+    const $formTitle = $('#formTitle');
+
+    function fetchCars() {
+        $.ajax({
+            url: '/api/cars',
+            method: 'GET',
+            success: function(cars) {
+                $tableBody.empty();
+                cars.forEach(car => {
+                    $tableBody.append(`
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-2">${car.carId}</td>
+                            <td class="px-4 py-2">${car.licensePlateNumber}</td>
+                            <td class="px-4 py-2">${car.make}</td>
+                            <td class="px-4 py-2">${car.model}</td>
+                            <td class="px-4 py-2">${car.year}</td>
+                            <td class="px-4 py-2">${car.color || ''}</td>
+                            <td class="px-4 py-2">${car.bodyType || ''}</td>
+                            <td class="px-4 py-2">${car.engineType || ''}</td>
+                            <td class="px-4 py-2">${car.transmission || ''}</td>
+                            <td class="px-4 py-2 space-x-2">
+                                <button class="editBtn px-2 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm" data-id="${car.carId}">Edit</button>
+                                <button class="deleteBtn px-2 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm" data-id="${car.carId}">Delete</button>
+                            </td>
+                        </tr>
+                    `);
+                });
+            }
+        });
+    }
+
+    function openForm(car = null) {
+        if(car) {
+            $formTitle.text('Edit Car');
+            $('#carId').val(car.carId);
+            $('#licensePlateNumber').val(car.licensePlateNumber);
+            $('#make').val(car.make);
+            $('#model').val(car.model);
+            $('#year').val(car.year);
+            $('#color').val(car.color || '');
+            $('#bodyType').val(car.bodyType || '');
+            $('#engineType').val(car.engineType || '');
+            $('#transmission').val(car.transmission || '');
+        } else {
+            $formTitle.text('Add New Car');
+            $form[0].reset();
+            $('#carId').val('');
+        }
+        $modal.removeClass('hidden');
+    }
+
+    function closeForm() {
+        $modal.addClass('hidden');
+    }
+
+    $('#addCarBtn').click(function() {
+        openForm();
+    });
+
+    $('#cancelBtn').click(function() {
+        closeForm();
+    });
+
+    $tableBody.on('click', '.editBtn', function() {
+        const id = $(this).data('id');
+        $.ajax({
+            url: `/api/cars/${id}`,
+            method: 'GET',
+            success: function(car) {
+                openForm(car);
+            }
+        });
+    });
+
+    $tableBody.on('click', '.deleteBtn', function() {
+        const id = $(this).data('id');
+        if(confirm('Are you sure you want to delete this car?')) {
+            $.ajax({
+                url: `/api/cars/${id}`,
+                method: 'DELETE',
+                success: fetchCars
+            });
+        }
+    });
+
+    $form.submit(function(e) {
+        e.preventDefault();
+        const carId = $('#carId').val();
+        const carData = {
+            licensePlateNumber: $('#licensePlateNumber').val(),
+            make: $('#make').val(),
+            model: $('#model').val(),
+            year: parseInt($('#year').val()),
+            color: $('#color').val(),
+            bodyType: $('#bodyType').val(),
+            engineType: $('#engineType').val(),
+            transmission: $('#transmission').val()
+        };
+
+        if(carId) {
+            $.ajax({
+                url: `/api/cars/${carId}`,
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(carData),
+                success: function() {
+                    closeForm();
+                    fetchCars();
+                }
+            });
+        } else {
+            $.ajax({
+                url: '/api/cars',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(carData),
+                success: function() {
+                    closeForm();
+                    fetchCars();
+                }
+            });
+        }
+    });
+
+
+    fetchCars();
+});
+</script>
+
+</body>
+</html>

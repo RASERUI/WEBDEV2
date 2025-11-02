@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Mode - Car List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 p-5">
+
+<!-- Container -->
+<div class="max-w-6xl mx-auto bg-white p-6 rounded-xl shadow-md">
+
+    <h1 class="text-2xl font-normal text-center mb-6">Edit Mode - Car List</h1>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full border-collapse table-auto">
+            <thead>
+            <tr class="bg-gray-200">
+                <th class="px-4 py-2 text-left">ID</th>
+                <th class="px-4 py-2 text-left">Plate</th>
+                <th class="px-4 py-2 text-left">Make</th>
+                <th class="px-4 py-2 text-left">Model</th>
+                <th class="px-4 py-2 text-left">Year</th>
+                <th class="px-4 py-2 text-left">Color</th>
+                <th class="px-4 py-2 text-left">Body</th>
+                <th class="px-4 py-2 text-left">Engine</th>
+                <th class="px-4 py-2 text-left">Transmission</th>
+                <th class="px-4 py-2 text-left">Actions</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+            <tr th:each="car : ${cars}" class="hover:bg-gray-50">
+                <td class="px-4 py-2" th:text="${car.carId}"></td>
+                <td class="px-4 py-2" th:text="${car.licensePlateNumber}"></td>
+                <td class="px-4 py-2" th:text="${car.make}"></td>
+                <td class="px-4 py-2" th:text="${car.model}"></td>
+                <td class="px-4 py-2" th:text="${car.year}"></td>
+                <td class="px-4 py-2" th:text="${car.color}"></td>
+                <td class="px-4 py-2" th:text="${car.bodyType}"></td>
+                <td class="px-4 py-2" th:text="${car.engineType}"></td>
+                <td class="px-4 py-2" th:text="${car.transmission}"></td>
+                <td class="px-4 py-2 space-x-2">
+                    <a th:href="@{/edit/{id}(id=${car.carId})}" class="px-2 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm">Edit</a>
+                    <a th:href="@{/delete/{id}(id=${car.carId})}" class="px-2 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Buttons -->
+    <div class="mt-4 flex space-x-2">
+        <a href="/new" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">+ Add New Car</a>
+        <a href="/" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors">Exit Edit Mode</a>
+    </div>
+
+</div>
+
+</body>
+
+</html>
