@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Shop - React Frontend</title>
+    <script src="https://cdn.jsdelivr.net/npm/react@17/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@17/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        #loginDiv, #carShopDiv {
+            width: 90%;
+            max-width: 700px;
+            margin: 30px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 2px 10px rgba(0,0,0,0.1);
+        }
+
+        form div {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="password"], input[type="number"] {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        #carFormModal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 2px 10px rgba(0,0,0,0.3);
+            border-radius: 8px;
+            z-index: 1000;
+        }
+
+        #carFormModal h2 {
+            margin-top: 0;
+        }
+
+        #carFormModal button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="root"></div> 
+
+    <script type="text/javascript">
+        const { useState, useEffect } = React;
+
+
+        function LoginForm({ setToken }) {
+            const [username, setUsername] = useState('');
+            const [password, setPassword] = useState('');
+            const [error, setError] = useState('');
+
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                try {
+                    const response = await axios.post('/api/login', { username, password });
+                    setToken(response.data.token);
+                } catch (error) {
+                    setError('Invalid username or password');
+                }
+            };
+
+            return (
+                <div id="loginDiv">
+                    <h2>Login</h2>
+                    <form onSubmit={handleSubmit}>
+                        <div>
+                            <label>Username</label>
+                            <input
+                                type="text"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label>Password</label>
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                        </div>
+                        {error && <div style={{ color: 'red' }}>{error}</div>}
+                        <button type="submit">Login</button>
+                    </form>
+                </div>
+            );
+        }
+
+
+        function CarShop({ cars, setCars, setToken }) {
+            const [showModal, setShowModal] = useState(false);
+            const [currentCar, setCurrentCar] = useState(null);
+
+            const handleLogout = () => {
+                setToken(null);
+            };
+
+            const handleAddCar = () => {
+                setCurrentCar(null);
+                setShowModal(true);
+            };
+
+            const handleDeleteCar = async (carId) => {
+                try {
+                    await axios.delete(`/api/cars/${carId}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    setCars(cars.filter(car => car.carId !== carId));
+                } catch (error) {
+                    console.error("Error deleting car", error);
+                }
+            };
+
+            return (
+                <div id="carShopDiv">
+                    <h1>Car Shop</h1>
+                    <button onClick={handleLogout}>Logout</button>
+                    <button onClick={handleAddCar}>+ Add Car</button>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Plate</th>
+                                <th>Make</th>
+                                <th>Model</th>
+                                <th>Year</th>
+                                <th>Color</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {cars.map(car => (
+                                <tr key={car.carId}>
+                                    <td>{car.carId}</td>
+                                    <td>{car.licensePlateNumber}</td>
+                                    <td>{car.make}</td>
+                                    <td>{car.model}</td>
+                                    <td>{car.year}</td>
+                                    <td>{car.color}</td>
+                                    <td>
+                                        <button onClick={() => handleDeleteCar(car.carId)}>Delete</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            );
+        }
+
+        function App() {
+            const [token, setToken] = useState(null);
+            const [cars, setCars] = useState([]);
+
+            useEffect(() => {
+                if (token) {
+                    fetchCars();
+                }
+            }, [token]);
+
+            const fetchCars = async () => {
+                try {
+                    const response = await axios.get('/api/cars', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    setCars(response.data);
+                } catch (error) {
+                    console.error("Error fetching cars", error);
+                }
+            };
+
+            return (
+                <div className="App">
+                    {token ? (
+                        <CarShop cars={cars} setCars={setCars} setToken={setToken} />
+                    ) : (
+                        <LoginForm setToken={setToken} />
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
