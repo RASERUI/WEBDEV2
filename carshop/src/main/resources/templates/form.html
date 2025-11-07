@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add / Edit Car</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Visible scrollbar styling -->
+  <style>
+    /* Force a visible scrollbar (always) on WebKit (Chrome, Safari, Edge) */
+    .visible-scroll::-webkit-scrollbar {
+      width: 14px;               /* track width */
+    }
+    .visible-scroll::-webkit-scrollbar-track {
+      background: #f1f5f9;       /* light track */
+      border-radius: 8px;
+    }
+    .visible-scroll::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1; /* thumb color */
+      border-radius: 8px;
+      border: 3px solid #f1f5f9; /* create padding around thumb */
+    }
+
+    /* Firefox: make scrollbar visible and styled */
+    .visible-scroll {
+      scrollbar-width: thin; /* auto | thin | none */
+      scrollbar-color: #94a3b8 #f1f5f9; /* thumb color, track color */
+    }
+  </style>
+</head>
+<body class="bg-gray-100 p-5">
+  <div class="max-w-lg mx-auto bg-white p-6 rounded-xl shadow-md">
+
+    <h1 class="text-2xl font-normal text-center mb-4" 
+        th:text="${car.carId != null} ? 'Edit Car' : 'Add New Car'">Add New Car</h1>
+
+    <!-- Scrollable Container: use overflow-y-scroll and visible-scroll class for styling -->
+    <div class="max-h-[450px] overflow-y-scroll visible-scroll pr-2">
+      <form th:action="@{/save}" th:object="${car}" method="post" class="space-y-4">
+        <input type="hidden" th:field="*{carId}" />
+
+        <!-- License Plate -->
+        <div>
+          <label class="block mb-1 font-medium text-gray-700">License Plate</label>
+          <input type="text" th:field="*{licensePlateNumber}"
+                 class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" />
+          <p th:if="${#fields.hasErrors('licensePlateNumber')}" th:errors="*{licensePlateNumber}"
+             class="text-red-500 text-sm mt-1"></p>
+        </div>
+
+        <!-- Make -->
+        <div>
+          <label class="block mb-1 font-medium text-gray-700">Make</label>
+          <input type="text" th:field="*{make}"
+                 class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" />
+          <p th:if="${#fields.hasErrors('make')}" th:errors="*{make}" class="text-red-500 text-sm mt-1"></p>
+        </div>
+
+        <!-- Model -->
+        <div>
+          <label class="block mb-1 font-medium text-gray-700">Model</label>
+          <input type="text" th:field="*{model}"
+                 class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" />
+          <p th:if="${#fields.hasErrors('model')}" th:errors="*{model}" class="text-red-500 text-sm mt-1"></p>
+        </div>
+
+        <!-- Year -->
+        <div>
+          <label class="block mb-1 font-medium text-gray-700">Year</label>
+          <input type="number" th:field="*{year}"
+                 class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" />
+          <p th:if="${#fields.hasErrors('year')}" th:errors="*{year}" class="text-red-500 text-sm mt-1"></p>
+        </div>
+
+        <!-- Color -->
+        <div>
+          <label class="block mb-1 font-medium text-gray-700">Color</label>
+          <input type="text" th:field="*{color}"
+                 class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" />
+          <p th:if="${#fields.hasErrors('color')}" th:errors="*{color}" class="text-red-500 text-sm mt-1"></p>
+        </div>
+
+        <!-- Body Type -->
+        <div>
+          <label class="block mb-1 font-medium text-gray-700">Body Type</label>
+          <div class="flex gap-4 flex-wrap">
+            <label><input type="radio" th:field="*{bodyType}" value="Sedan" class="mr-1"> Sedan</label>
+            <label><input type="radio" th:field="*{bodyType}" value="SUV" class="mr-1"> SUV</label>
+            <label><input type="radio" th:field="*{bodyType}" value="Hatchback" class="mr-1"> Hatchback</label>
+            <label><input type="radio" th:field="*{bodyType}" value="Coupe" class="mr-1"> Coupe</label>
+            <label><input type="radio" th:field="*{bodyType}" value="Minivan" class="mr-1"> Minivan</label>
+          </div>
+          <p th:if="${#fields.hasErrors('bodyType')}" th:errors="*{bodyType}" class="text-red-500 text-sm mt-1"></p>
+        </div>
+
+        <!-- Engine Type -->
+        <div>
+          <label class="block mb-1 font-medium text-gray-700">Engine Type</label>
+          <div class="flex gap-4 flex-wrap">
+            <label><input type="radio" th:field="*{engineType}" value="Gasoline" class="mr-1"> Gasoline</label>
+            <label><input type="radio" th:field="*{engineType}" value="Diesel" class="mr-1"> Diesel</label>
+            <label><input type="radio" th:field="*{engineType}" value="Electric" class="mr-1"> Electric</label>
+            <label><input type="radio" th:field="*{engineType}" value="Hybrid" class="mr-1"> Hybrid</label>
+          </div>
+          <p th:if="${#fields.hasErrors('engineType')}" th:errors="*{engineType}" class="text-red-500 text-sm mt-1"></p>
+        </div>
+
+        <!-- Transmission -->
+        <div>
+          <label class="block mb-1 font-medium text-gray-700">Transmission</label>
+          <div class="flex gap-4 flex-wrap">
+            <label><input type="radio" th:field="*{transmission}" value="Automatic" class="mr-1"> Automatic</label>
+            <label><input type="radio" th:field="*{transmission}" value="Manual" class="mr-1"> Manual</label>
+          </div>
+          <p th:if="${#fields.hasErrors('transmission')}" th:errors="*{transmission}" class="text-red-500 text-sm mt-1"></p>
+        </div>
+
+        <!-- Submit -->
+        <div>
+          <button type="submit"
+                  class="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 transition-colors">Save</button>
+        </div>
+      </form>
+    </div>
+
+    <a href="/" class="inline-block mt-4 text-gray-700 hover:text-gray-900">&larr; Back to List</a>
+  </div>
+</body>
+</html>

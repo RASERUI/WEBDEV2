@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Shop - Fetch API</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- ✅ Visible Scrollbar Styling -->
+    <style>
+        .visible-scroll::-webkit-scrollbar { width: 10px; }
+        .visible-scroll::-webkit-scrollbar-track { background: #e5e7eb; }
+        .visible-scroll::-webkit-scrollbar-thumb { background: #9ca3af; border-radius: 6px; }
+        .visible-scroll { scrollbar-width: thin; scrollbar-color: #9ca3af #e5e7eb; }
+    </style>
+</head>
+
+<body class="bg-gray-100 p-5">
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="max-w-sm mx-auto bg-white p-6 rounded-xl shadow-md mt-20">
+    <h2 class="text-xl font-semibold text-center mb-4">Login</h2>
+
+    <form id="loginForm" class="space-y-4">
+
+        <div>
+            <label class="block mb-1">Username</label>
+            <input type="text" id="username" class="w-full p-2 border rounded-md">
+            <p id="usernameError" class="text-red-600 text-sm mt-1 hidden">Username is required</p>
+        </div>
+
+        <div>
+            <label class="block mb-1">Password</label>
+            <input type="password" id="password" class="w-full p-2 border rounded-md">
+            <p id="passwordError" class="text-red-600 text-sm mt-1 hidden">Password is required</p>
+        </div>
+
+        <p id="loginError" class="text-red-600 text-sm text-center hidden">
+            Incorrect username or password
+        </p>
+
+        <button class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">Login</button>
+    </form>
+</div>
+
+<!-- CAR APP SCREEN -->
+<div id="carApp" class="max-w-6xl mx-auto bg-white p-6 rounded-xl shadow-md hidden">
+
+    <h1 class="text-2xl font-normal text-center mb-6">Car Shop</h1>
+
+    <div class="flex justify-end mb-4">
+        <button onclick="logout()" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 mr-2">Logout</button>
+        <button onclick="openForm()" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">+ Add Car</button>
+    </div>
+
+    <!-- ✅ SCROLLABLE ADD/EDIT MODAL -->
+    <div id="carFormModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center">
+        <div class="bg-white p-6 rounded-xl w-full max-w-lg h-[450px] overflow-y-scroll visible-scroll">
+            <h2 id="formTitle" class="text-xl font-semibold mb-4">Add New Car</h2>
+
+            <form id="carForm" class="space-y-4">
+                <input type="hidden" id="carId" />
+
+                <div><label>License Plate</label><input type="text" id="licensePlateNumber" class="w-full p-2 border rounded-md" required></div>
+                <div><label>Make</label><input type="text" id="make" class="w-full p-2 border rounded-md" required></div>
+                <div><label>Model</label><input type="text" id="model" class="w-full p-2 border rounded-md" required></div>
+                <div><label>Year</label><input type="number" id="year" class="w-full p-2 border rounded-md" required></div>
+                <div><label>Color</label><input type="text" id="color" class="w-full p-2 border rounded-md"></div>
+                <div><label>Body Type</label><input type="text" id="bodyType" class="w-full p-2 border rounded-md"></div>
+                <div><label>Engine Type</label><input type="text" id="engineType" class="w-full p-2 border rounded-md"></div>
+                <div><label>Transmission</label><input type="text" id="transmission" class="w-full p-2 border rounded-md"></div>
+
+                <div class="flex justify-end space-x-2">
+                    <button type="button" onclick="closeForm()" class="px-4 py-2 bg-gray-400 rounded-md text-white">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 rounded-md text-white">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CAR TABLE -->
+    <div class="overflow-x-auto">
+        <table class="min-w-full border-collapse table-auto">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th>ID</th><th>Plate</th><th>Make</th><th>Model</th><th>Year</th>
+                    <th>Color</th><th>Body</th><th>Engine</th><th>Transmission</th><th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="car-table-body" class="divide-y divide-gray-200"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+const tableBody = document.getElementById('car-table-body');
+const modal = document.getElementById('carFormModal');
+const loginScreen = document.getElementById('loginScreen');
+const appScreen = document.getElementById('carApp');
+const form = document.getElementById('carForm');
+
+function checkAuth() {
+    if (!localStorage.getItem('token')) {
+        loginScreen.classList.remove('hidden');
+        appScreen.classList.add('hidden');
+        return false;
+    }
+    loginScreen.classList.add('hidden');
+    appScreen.classList.remove('hidden');
+    return true;
+}
+
+document.getElementById('loginForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    usernameError.classList.add('hidden');
+    passwordError.classList.add('hidden');
+    loginError.classList.add('hidden');
+
+    if(username.value.trim()===""){ usernameError.classList.remove('hidden'); return;}
+    if(password.value.trim()===""){ passwordError.classList.remove('hidden'); return;}
+
+    if (username.value === "admin" && password.value === "admin123") {
+        localStorage.setItem("token", "fake-token");
+        checkAuth();
+        fetchCars();
+    } else loginError.classList.remove('hidden');
+});
+
+function logout() { localStorage.removeItem('token'); checkAuth(); }
+
+async function fetchCars() {
+    const res = await fetch('/api/cars');
+    const cars = await res.json();
+    tableBody.innerHTML = cars.map(car => `
+        <tr class="hover:bg-gray-50">
+            <td>${car.carId}</td><td>${car.licensePlateNumber}</td><td>${car.make}</td><td>${car.model}</td>
+            <td>${car.year}</td><td>${car.color||''}</td><td>${car.bodyType||''}</td>
+            <td>${car.engineType||''}</td><td>${car.transmission||''}</td>
+            <td>
+                <button onclick="editCar(${car.carId})" class="bg-blue-600 text-white px-2 py-1 text-sm rounded-md">Edit</button>
+                <button onclick="deleteCar(${car.carId})" class="bg-red-600 text-white px-2 py-1 text-sm rounded-md">Delete</button>
+            </td>
+        </tr>`).join('');
+}
+
+async function deleteCar(id) {
+    if(confirm('Delete this car?')) {
+        await fetch(`/api/cars/${id}`, { method: 'DELETE' });
+        fetchCars();
+    }
+}
+
+function openForm(car=null) {
+    modal.classList.remove('hidden');
+    if(car){
+        formTitle.textContent="Edit Car";
+        carId.value=car.carId;
+        licensePlateNumber.value=car.licensePlateNumber;
+        make.value=car.make; model.value=car.model;
+        year.value=car.year; color.value=car.color||"";
+        bodyType.value=car.bodyType||""; engineType.value=car.engineType||"";
+        transmission.value=car.transmission||"";
+    } else { form.reset(); carId.value=""; formTitle.textContent="Add New Car"; }
+}
+
+function closeForm(){ modal.classList.add('hidden'); }
+
+async function editCar(id){
+    const res = await fetch(`/api/cars/${id}`);
+    openForm(await res.json());
+}
+
+form.addEventListener('submit', async(e)=>{
+    e.preventDefault();
+    const data={
+        licensePlateNumber:licensePlateNumber.value,
+        make:make.value, model:model.value, year:+year.value,
+        color:color.value, bodyType:bodyType.value,
+        engineType:engineType.value, transmission:transmission.value
+    };
+    await fetch(carId.value ? `/api/cars/${carId.value}` : '/api/cars',{
+        method:carId.value?'PUT':'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(data)
+    });
+    closeForm(); fetchCars();
+});
+
+// INITIAL
+checkAuth(); if(checkAuth()) fetchCars();
+</script>
+
+</body>
+</html>
